@@ -3480,7 +3480,16 @@ xlate_hash_fields_select_group(struct xlate_ctx *ctx, struct group_dpif *group)
 static void
 xlate_select_group(struct xlate_ctx *ctx, struct group_dpif *group)
 {
-    xlate_default_select_group(ctx, group);
+    const char *selection_method = group_dpif_get_selection_method(group);
+
+    if (selection_method[0] == '\0') {
+        xlate_default_select_group(ctx, group);
+    } else if (!strcasecmp("hash", selection_method)) {
+        xlate_hash_fields_select_group(ctx, group);
+    } else {
+        /* Parsing of groups should ensure this never happens */
+        OVS_NOT_REACHED();
+    }
 }
 
 static void
