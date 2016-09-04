@@ -3394,12 +3394,10 @@ xlate_ff_group(struct xlate_ctx *ctx, struct group_dpif *group)
 static void
 xlate_default_select_group(struct xlate_ctx *ctx, struct group_dpif *group)
 {
-    struct flow_wildcards *wc = ctx->wc;
     struct ofputil_bucket *bucket;
     uint32_t basis;
 
-    basis = flow_hash_symmetric_l4(&ctx->xin->flow, 0);
-    flow_mask_hash_fields(&ctx->xin->flow, wc, NX_HASH_FIELDS_SYMMETRIC_L4);
+    basis = random_uint32();
     bucket = group_best_live_bucket(ctx, group, basis);
     if (bucket) {
         xlate_group_bucket(ctx, bucket);
